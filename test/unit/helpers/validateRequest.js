@@ -14,7 +14,7 @@ describe('helpers/validateRequest', () => {
         errors.noAccountId
       )
     })
-    it('(invalidAccountId): should reject an invalid account ID', () => {
+    it('(invalidAccountId - type): should reject an invalid account ID', () => {
       const accountId = '1'
       const ticketRequest = {}
       assert.throws(
@@ -27,6 +27,24 @@ describe('helpers/validateRequest', () => {
         () => validateRequest({ accountId, ticketRequest }),
         Error,
         `${errors.insufficientAdultTickets}`
+      )
+    })
+    it('(invalidAccountId === 0): should reject an invalid account ID (type)', () => {
+      const accountId = 0
+      const ticketRequest = { adult: 3, child: 7, infant: 3 }
+      assert.throws(
+        () => validateRequest({ accountId, ticketRequest }),
+        Error,
+        `${errors.invalidAccountId}`
+      )
+    })
+    it('(invalidAccountId < 0): should reject an invalid account ID (type)', () => {
+      const accountId = -40
+      const ticketRequest = { adult: 3, child: 7, infant: 3 }
+      assert.throws(
+        () => validateRequest({ accountId, ticketRequest }),
+        Error,
+        `${errors.invalidAccountId}`
       )
     })
     it('(noTicketsRequested): should reject a valid account ID and no tickets requested', () => {
