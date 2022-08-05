@@ -1,0 +1,533 @@
+{
+	"info": {
+		"_postman_id": "b1d02150-edc0-42e8-8462-8ac0f57f95c2",
+		"name": "cinema-tickets",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Success",
+			"item": [
+				{
+					"name": "3 adult 2 child 1 infant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Total payment\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    // (3 * 20) + (2 * 10) + 0 (infant)",
+									"    pm.expect(jsonData.totalPayment).to.eql(80);",
+									"});",
+									"",
+									"pm.test(\"Seats requested\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    // 3 adults + 2 children",
+									"    // infant does not get a seat",
+									"    pm.expect(jsonData.numberOfSeatsRequested).to.eql(5);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountId\": 39,\n    \"ticketsRequested\": {\n        \"adult\": 3,\n        \"child\": 2,\n        \"infant\": 1\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1 adult 18 child 1 infant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Total payment\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    // (1 * 20) + (18 * 10) + 0 (infant)",
+									"    pm.expect(jsonData.totalPayment).to.eql(200);",
+									"});",
+									"",
+									"pm.test(\"Seats requested\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    // 1 adult + 18 children",
+									"    // infant does not get a seat",
+									"    pm.expect(jsonData.numberOfSeatsRequested).to.eql(19);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountId\": 39,\n    \"ticketsRequested\": {\n        \"adult\": 1,\n        \"child\": 18,\n        \"infant\": 1\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "20 adult 0 child 0 infant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Total payment\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    // 20 * 20",
+									"    pm.expect(jsonData.totalPayment).to.eql(400);",
+									"});",
+									"",
+									"pm.test(\"Seats requested\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.numberOfSeatsRequested).to.eql(20);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountId\": 39,\n    \"ticketsRequested\": {\n        \"adult\": 20,\n        \"child\": 0,\n        \"infant\": 0\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "1 adult 0 child 0 infant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Total payment\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    // 20 * 20",
+									"    pm.expect(jsonData.totalPayment).to.eql(20);",
+									"});",
+									"",
+									"pm.test(\"Seats requested\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.numberOfSeatsRequested).to.eql(1);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountId\": 39,\n    \"ticketsRequested\": {\n        \"adult\": 1,\n        \"child\": 0,\n        \"infant\": 0\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Error",
+			"item": [
+				{
+					"name": "No account ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 500\", function () {",
+									"    pm.response.to.have.status(500);",
+									"});",
+									"",
+									"pm.test(\"Success is false\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.eql(false);",
+									"});",
+									"",
+									"pm.test(\"Body returns invalid account ID\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"No account ID provided\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ticketsRequested\": {\n        \"adult\": 20,\n        \"child\": 0,\n        \"infant\": 0\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "No adults",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 500\", function () {",
+									"    pm.response.to.have.status(500);",
+									"});",
+									"",
+									"pm.test(\"Success is false\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.success).to.eql(false);",
+									"});",
+									"",
+									"pm.test(\"Correct error strings returned\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.errors).to.include('Child and infant tickets must be purchased with an adult ticket');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountId\": 11491829,\n    \"ticketsRequested\": {\n        \"adult\": 0,\n        \"child\": 1,\n        \"infant\": 0\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Too many tickets",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 500\", function () {",
+									"    pm.response.to.have.status(500);",
+									"});",
+									"",
+									"pm.test(\"Body returns too many tickets\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"Maximum number of tickets exceeded\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountId\": 11491829,\n    \"ticketsRequested\": {\n        \"adult\": 19,\n        \"child\": 1,\n        \"infant\": 1\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid account ID, not enough adults",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 500\", function () {",
+									"    pm.response.to.have.status(500);",
+									"});",
+									"",
+									"pm.test(\"Body returns invalid account ID\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"Invalid account ID\");",
+									"});",
+									"",
+									"pm.test(\"Body insufficient adult tickets message\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"The number of infant tickets must not exceed the number of adult tickets\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountId\": \"diddly-ding-dong-doo\",\n    \"ticketsRequested\": {\n        \"adult\": 2,\n        \"child\": 0,\n        \"infant\": 5\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid account ID, no adults, invalid ticket type, invalid ticket number",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 500\", function () {",
+									"    pm.response.to.have.status(500);",
+									"});",
+									"",
+									"pm.test(\"Body returns invalid account ID\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"Invalid account ID\");",
+									"});",
+									"",
+									"pm.test(\"Body returns insufficient adult tickets message\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"Child and infant tickets must be purchased with an adult ticket\");",
+									"});",
+									"",
+									"pm.test(\"Body returns invalid ticket type\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"Invalid ticket type\");",
+									"});",
+									"",
+									"pm.test(\"Body returns invalid ticket number format\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"Invalid ticket number format\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountId\": \"Steve Barnes\",\n    \"ticketsRequested\": {\n        \"adult\": 0,\n        \"child\": 1,\n        \"bacon\": \"ooh yes please\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/tickets",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"tickets"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Healthcheck",
+			"item": [
+				{
+					"name": "GET /healthcheck",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"})",
+									"",
+									"pm.test(\"Body matches string\", function () {",
+									"    pm.expect(pm.response.text()).to.include(\"Application is healthy\")",
+									"})",
+									"",
+									"pm.test(\"Response time is less than 130ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(130)",
+									"})",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/healthcheck",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"healthcheck"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

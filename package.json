@@ -1,30 +1,53 @@
 {
   "name": "cinema-tickets",
   "description": "This is a coding exercise which will allow you to demonstrate how you code and your approach to a given problem.",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "engines": {
-    "node": ">=16.15.1"
+    "node": ">=16.11.1"
   },
   "scripts": {
-    "test": "mocha --require mocha.global.js --recursive test"
+    "dev": "nodemon src/index.js",
+    "docker:build": "docker build . -t cinema-tickets-service",
+    "docker:run": "docker run -p 3000:3000 -d --name cinema-tickets-service cinema-tickets-service",
+    "docker:restart": "npm run docker:stop && npm run docker:start",
+    "docker:start": "npm run docker:build && npm run docker:run",
+    "docker:stop": "docker stop cinema-tickets-service && docker rm cinema-tickets-service",
+    "start": "node src/index.js",
+    "test": "npm run test:lint && npm run test:coverage",
+    "test:coverage": "c8 --all -x src/pairtest -x src/thirdparty npm run test:unit",
+    "test:lint": "standard",
+    "test:unit": "mocha --require test/unit/config/mocha.global.js --recursive test"
   },
   "devDependencies": {
+    "c8": "^7.12.0",
     "chai": "4.3.6",
     "mocha": "10.0.0",
-    "sinon": "14.0.0"
+    "nodemon": "2.0.19",
+    "sinon": "14.0.0",
+    "standard": "17.0.0"
   },
   "dependencies": {
-    "axios": "0.27.2",
     "express": "4.18.1"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/aNerdInTheHand/cinema-tickets.git"
   },
+  "type": "module",
   "author": "Nick Holvast",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/aNerdInTheHand/cinema-tickets/issues"
-  },
-  "homepage": "https://github.com/aNerdInTheHand/cinema-tickets#readme"
+  "standard": {
+    "env": [
+      "mocha"
+    ],
+    "globals": [
+      "assert",
+      "chai",
+      "expect",
+      "sinon"
+    ],
+    "ignore": [
+      "src/pairtest"
+    ]
+  }
 }
