@@ -7,10 +7,11 @@ export default ({
   const errorMessages = C.tickets.responses.error
   const errors = []
 
-  if (!accountId) errors.push(errorMessages.noAccountId)
+  // handle accountId === 0 differently to no accountId provided
+  if (accountId !== 0 && !accountId) errors.push(errorMessages.noAccountId)
 
   else {
-    if (typeof accountId !== 'number') errors.push(errorMessages.invalidAccountId)
+    if (!Number.isInteger(accountId) || (Number.isInteger(accountId) && accountId <= 0)) errors.push(errorMessages.invalidAccountId)
 
     if (!ticketRequest || (ticketRequest.adult + ticketRequest.child + ticketRequest.infant === 0)) errors.push(errorMessages.noTicketsRequested)
     if (Object.keys(ticketRequest).length === 0) errors.push(errorMessages.invalidTicketType)
