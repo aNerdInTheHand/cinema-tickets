@@ -7,6 +7,19 @@
   },
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "npx prettier . --write",
+    "lint:check": "npx prettier . --check",
+    "prepare": "husky",
+    "test": "vitest"
   },
+  "devDependencies": {
+    "globals": "^16.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
+    "prettier": "3.6.2",
+    "vitest": "^3.2.4"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  }
 }
