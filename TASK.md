@@ -29,7 +29,9 @@ You will be assessed on:
 - The code in the thirdparty.\* packages CANNOT be modified.
 - The `TicketTypeRequest` SHOULD be an immutable object.
 
-## AssumptionsYou can assume:
+## Assumptions
+
+You can assume:
 
 - All accounts with an id greater than zero are valid. They also have sufficient funds to pay for any no of tickets.
 - The `TicketPaymentService` implementation is an external provider with no defects. You do not need to worry about how the actual payment happens.
