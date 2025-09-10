@@ -4,11 +4,13 @@ import TicketTypeRequest from "./lib/TicketTypeRequest.js";
 
 export default class TicketService {
   constructor(
+    logger,
     calculationService,
     ticketPaymentService,
     seatReservationService,
     validationService,
   ) {
+    this.logger = logger;
     this.calculationService = calculationService;
     this.seatReservationService = seatReservationService;
     this.ticketPaymentService = ticketPaymentService;
@@ -19,7 +21,13 @@ export default class TicketService {
    * Should only have private methods other than the one below.
    */
 
+  /**
+   * Orchestrates calls to the validation, seat reservation and payment services
+   * @param {Number} accountId
+   * @param  {...TicketTypeRequest} ticketTypeRequests
+   */
   purchaseTickets(accountId, ...ticketTypeRequests) {
+    this.logger.info({ accountId }, "Ticket purchase process started");
     this.#validateAccount(accountId);
     const ticketsRequested = this.#getTicketCounts(...ticketTypeRequests);
     this.#validateRequest(accountId, ticketsRequested);
