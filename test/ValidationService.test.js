@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import InvalidPurchaseException from "../src/pairtest/lib/InvalidPurchaseException.js";
 import ValidationService from "../src/pairtest/lib/ValidationService.js";
 
-describe("Ticket Service", () => {
+describe("Validation Service", () => {
   const validationService = new ValidationService();
   const validAccountId = 1;
   const invalidAccountIds = [-1, 0, 1.5, "1", true];

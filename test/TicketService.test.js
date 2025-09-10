@@ -10,11 +10,13 @@ const infant = (count) => new TicketTypeRequest("INFANT", count);
 describe("Ticket Service", () => {
   let ticketService;
 
+  let calculationMock;
   let paymentMock;
   let seatReservationMock;
   let validationMock;
 
   beforeEach(() => {
+    calculationMock = { calculateCost: vi.fn() };
     paymentMock = { makePayment: vi.fn() };
     seatReservationMock = { reserveSeat: vi.fn() };
     validationMock = {
@@ -22,6 +24,7 @@ describe("Ticket Service", () => {
       validateTicketTypes: vi.fn(),
     };
     ticketService = new TicketService(
+      calculationMock,
       paymentMock,
       seatReservationMock,
       validationMock,
@@ -29,7 +32,7 @@ describe("Ticket Service", () => {
   });
 
   describe("valid requests", () => {
-    test("should call the validation, reservation and payment services", () => {
+    test("should call the validation, calculation, reservation and payment services", () => {
       const accountId = 1;
       const adultTickets = adult(2);
       const childTickets = child(1);

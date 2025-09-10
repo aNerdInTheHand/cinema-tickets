@@ -1,16 +1,15 @@
 import C from "../constants";
 import InvalidPurchaseException from "./lib/InvalidPurchaseException.js";
 import TicketTypeRequest from "./lib/TicketTypeRequest.js";
-import SeatReservationService from "../thirdparty/seatbooking/SeatReservationService.js";
-import TicketPaymentService from "../thirdparty/paymentgateway/TicketPaymentService.js";
-import ValidationService from "./lib/ValidationService.js";
 
 export default class TicketService {
   constructor(
-    seatReservationService = new SeatReservationService(),
-    ticketPaymentService = new TicketPaymentService(),
-    validationService = new ValidationService(),
+    calculationService,
+    seatReservationService,
+    ticketPaymentService,
+    validationService,
   ) {
+    this.calculationService = calculationService;
     this.seatReservationService = seatReservationService;
     this.ticketPaymentService = ticketPaymentService;
     this.validationService = validationService;
