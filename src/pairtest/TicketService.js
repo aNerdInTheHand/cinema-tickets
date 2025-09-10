@@ -28,11 +28,14 @@ export default class TicketService {
    */
   purchaseTickets(accountId, ...ticketTypeRequests) {
     this.logger.info({ accountId }, "Ticket purchase process started");
+
     this.#validateAccount(accountId);
     const ticketsRequested = this.#getTicketCounts(...ticketTypeRequests);
     this.#validateRequest(accountId, ticketsRequested);
     this.#makePayment(accountId, ticketsRequested);
     this.#reserveSeats(accountId, ticketsRequested);
+
+    this.logger.info({ accountId }, "Booking complete");
   }
 
   #getTicketCounts(...ticketTypeRequests) {
@@ -60,14 +63,18 @@ export default class TicketService {
   }
 
   #makePayment(accountId, ticketsRequested) {
+    this.logger.info({ accountId }, "Making payment");
     const paymentAmount =
       this.calculationService.calculateCost(ticketsRequested);
     this.ticketPaymentService.makePayment(accountId, paymentAmount);
+    this.logger.info({ accountId }, "Payment successful");
   }
 
   #reserveSeats(accountId, ticketsRequested) {
+    this.logger.info({ accountId }, "Reserving seats");
     const seatsExcludingInfants =
       ticketsRequested.TOTAL - ticketsRequested.INFANT;
     this.seatReservationService.reserveSeat(accountId, seatsExcludingInfants);
+    this.logger.info({ accountId }, "Seats successfully reserved");
   }
 }
