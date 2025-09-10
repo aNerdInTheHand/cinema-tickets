@@ -93,7 +93,7 @@ describe("Ticket Service", () => {
     });
     test("should throw an error if the number of child or infant tickets exceeds the number of adult tickets", () => {
       const adultTickets = adult(2);
-      const childTickets = adult(10);
+      const childTickets = child(10);
       const infantTickets = infant(10);
 
       expect(() =>

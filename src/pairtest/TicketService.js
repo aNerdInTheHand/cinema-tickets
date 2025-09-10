@@ -55,6 +55,11 @@ export default class TicketService {
       throw new InvalidPurchaseException(
         `Too many tickets requested - ${ticketsRequested.TOTAL} of maximum ${C.maxTickets}`,
       );
+
+    if (ticketsRequested.INFANT > ticketsRequested.ADULT)
+      throw new InvalidPurchaseException(
+        `Account ID ${this.accountId} tried to purchase more infant tickets (${ticketsRequested.INFANT}) than adult tickets (${ticketsRequested.ADULT})`,
+      );
   }
 
   #maybePluraliseWord(word, count) {
