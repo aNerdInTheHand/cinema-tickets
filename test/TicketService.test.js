@@ -10,12 +10,14 @@ const infant = (count) => new TicketTypeRequest("INFANT", count);
 describe("Ticket Service", () => {
   let ticketService;
 
+  let logMock;
   let calculationMock;
   let paymentMock;
   let seatReservationMock;
   let validationMock;
 
   beforeEach(() => {
+    logMock = { info: vi.fn() };
     calculationMock = { calculateCost: vi.fn() };
     paymentMock = { makePayment: vi.fn() };
     seatReservationMock = { reserveSeat: vi.fn() };
@@ -24,6 +26,7 @@ describe("Ticket Service", () => {
       validateTicketTypes: vi.fn(),
     };
     ticketService = new TicketService(
+      logMock,
       calculationMock,
       paymentMock,
       seatReservationMock,
@@ -57,6 +60,10 @@ describe("Ticket Service", () => {
         infantTickets,
       );
 
+      expect(logMock.info).toHaveBeenCalledWith(
+        { accountId },
+        "Ticket purchase process started",
+      );
       expect(validationMock.validateAccountId).toHaveBeenCalledWith(accountId);
       expect(validationMock.validateTicketTypes).toHaveBeenCalledWith(
         accountId,
