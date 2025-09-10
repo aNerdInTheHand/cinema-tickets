@@ -1,7 +1,7 @@
 import C from "../../constants";
 import InvalidPurchaseException from "./InvalidPurchaseException.js";
 
-export default class TicketService {
+export default class ValidationService {
   validateAccountId(accountId) {
     if (
       typeof accountId !== "number" ||
@@ -22,7 +22,7 @@ export default class TicketService {
         `Account ID ${accountId} tried to purchase ${ticketsRequested.CHILD} child ${this.#maybePluraliseWord("ticket", ticketsRequested.CHILD)} and ${ticketsRequested.INFANT} infant ${this.#maybePluraliseWord("ticket", ticketsRequested.INFANT)} with no adult ticket`,
       );
 
-    if (ticketsRequested.TOTAL > 25)
+    if (ticketsRequested.TOTAL > C.maxTickets)
       throw new InvalidPurchaseException(
         `Too many tickets requested - ${ticketsRequested.TOTAL} of maximum ${C.maxTickets}`,
       );
@@ -34,7 +34,7 @@ export default class TicketService {
   }
 
   #maybePluraliseWord(word, count) {
-    if (count > 1) return `${word}s`;
+    if (count !== 1) return `${word}s`;
     else return word;
   }
 }

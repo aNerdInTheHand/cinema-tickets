@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import C from "../src/constants";
 import InvalidPurchaseException from "../src/pairtest/lib/InvalidPurchaseException.js";
 import ValidationService from "../src/pairtest/lib/ValidationService.js";
 
@@ -30,6 +31,19 @@ describe("Validation Service", () => {
   });
 
   describe("validateTicketTypes", () => {
+    test("should not throw", () => {
+      const edgeCaseValidRequest = {
+        ADULT: 10,
+        CHILD: 5,
+        INFANT: 10,
+      };
+      expect(() =>
+        validationService.validateAccountId(
+          validAccountId,
+          edgeCaseValidRequest,
+        ),
+      ).not.toThrow();
+    });
     test("should throw an error if more than 25 tickets are requested", () => {
       const invalidRequest = {
         ADULT: 26,
@@ -41,22 +55,55 @@ describe("Validation Service", () => {
         validationService.validateTicketTypes(validAccountId, invalidRequest),
       ).toThrow(
         new InvalidPurchaseException(
-          `Too many tickets requested - 26 of maximum 25`,
+          `Too many tickets requested - 26 of maximum ${C.maxTickets}`,
         ),
       );
     });
 
     test("should throw an error if no adult tickets are purchased", () => {
-      const invalidRequest = {
+      const invalidRequestChildAndInfant = {
         ...validRequest,
         ADULT: 0,
       };
+      const invalidRequestChildOnly = {
+        ...validRequest,
+        ADULT: 0,
+        INFANT: 0,
+      };
+      const invalidRequestInfantOnly = {
+        ...validRequest,
+        ADULT: 0,
+        CHILD: 0,
+      };
 
       expect(() =>
-        validationService.validateTicketTypes(validAccountId, invalidRequest),
+        validationService.validateTicketTypes(
+          validAccountId,
+          invalidRequestChildAndInfant,
+        ),
       ).toThrow(
         new InvalidPurchaseException(
           "Account ID 1 tried to purchase 1 child ticket and 3 infant tickets with no adult ticket",
+        ),
+      );
+      expect(() =>
+        validationService.validateTicketTypes(
+          validAccountId,
+          invalidRequestChildOnly,
+        ),
+      ).toThrow(
+        new InvalidPurchaseException(
+          "Account ID 1 tried to purchase 1 child ticket and 0 infant tickets with no adult ticket",
+        ),
+      );
+      expect(() =>
+        validationService.validateTicketTypes(
+          validAccountId,
+          invalidRequestInfantOnly,
+        ),
+      ).toThrow(
+        new InvalidPurchaseException(
+          "Account ID 1 tried to purchase 0 child tickets and 3 infant tickets with no adult ticket",
         ),
       );
     });
