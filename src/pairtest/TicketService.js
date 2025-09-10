@@ -19,6 +19,7 @@ export default class TicketService {
 
   purchaseTickets(accountId, ...ticketTypeRequests) {
     console.log(...ticketTypeRequests);
+    this.accountId = accountId;
     this.#validateAccountId(accountId);
     this.#validateTicketTypes(...ticketTypeRequests);
   }
@@ -33,13 +34,35 @@ export default class TicketService {
   }
 
   #validateTicketTypes(...ticketTypeRequests) {
-    let totalTickets = 0;
+    const ticketsRequested = {
+      ADULT: 0,
+      CHILD: 0,
+      INFANT: 0,
+      TOTAL: 0,
+    };
+
     ticketTypeRequests.forEach((request) => {
-      totalTickets += request.getNoOfTickets();
+      ticketsRequested[request.getTicketType()] += request.getNoOfTickets();
+      ticketsRequested.TOTAL += request.getNoOfTickets();
     });
-    if (totalTickets > 25)
+
+    if (ticketsRequested.ADULT === 0)
       throw new InvalidPurchaseException(
-        `Too many tickets requested - ${totalTickets} of maximum ${C.maxTickets}`,
+        `Account ID ${this.accountId} tried to purchase ${ticketsRequested.CHILD} child ${this.#maybePluraliseWord("ticket", ticketsRequested.CHILD)} and ${ticketsRequested.INFANT} infant ${this.#maybePluraliseWord("ticket", ticketsRequested.INFANT)} with no adult ticket`,
+      );
+
+    if (ticketsRequested.TOTAL > 25)
+      throw new InvalidPurchaseException(
+        `Too many tickets requested - ${ticketsRequested.TOTAL} of maximum ${C.maxTickets}`,
       );
   }
+
+  #maybePluraliseWord(word, count) {
+    if (count > 1) return `${word}s`;
+    else return word;
+  }
+
+  // #ensureAdultTickets(...ticketTypeRequests) {
+  //   if
+  // }
 }

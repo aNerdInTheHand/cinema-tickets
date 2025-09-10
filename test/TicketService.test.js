@@ -80,14 +80,14 @@ describe("Ticket Service", () => {
       );
     });
     test("should throw an error if no adult tickets are purchased", () => {
-      const childTickets = new TicketTypeRequest(CHILD, 1);
+      const childTickets = new TicketTypeRequest(CHILD, 10);
       const infantTickets = new TicketTypeRequest(INFANT, 1);
 
       expect(() =>
         ticketService.purchaseTickets(1, childTickets, infantTickets),
       ).toThrow(
         new InvalidPurchaseException(
-          "Account ID 1 tried to purchase 1 child ticket and 1 infant ticket with no adult ticket",
+          "Account ID 1 tried to purchase 10 child tickets and 1 infant ticket with no adult ticket",
         ),
       );
     });
