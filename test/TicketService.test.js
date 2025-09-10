@@ -29,7 +29,7 @@ describe("Ticket Service", () => {
   });
 
   describe("valid requests", () => {
-    test("should call the validation service", () => {
+    test("should call the validation, reservation and payment services", () => {
       const accountId = 1;
       const adultTickets = adult(2);
       const childTickets = child(1);
@@ -40,6 +40,8 @@ describe("Ticket Service", () => {
         INFANT: 1,
         TOTAL: 4,
       };
+      const expectedSeatsToReserve = 3; // infants are excluded
+      const expectedPaymentAmount = 65; // 2 * 25 + 1 * 15
 
       ticketService.purchaseTickets(
         accountId,
@@ -52,6 +54,14 @@ describe("Ticket Service", () => {
       expect(validationMock.validateTicketTypes).toHaveBeenCalledWith(
         accountId,
         expectedTicketRequests,
+      );
+      expect(seatReservationMock.reserveSeat).toHaveBeenCalledWith(
+        accountId,
+        expectedSeatsToReserve,
+      );
+      expect(paymentMock.makePayment).toHaveBeenCalledWith(
+        accountId,
+        expectedPaymentAmount,
       );
     });
     test.todo(
