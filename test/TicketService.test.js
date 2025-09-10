@@ -71,20 +71,26 @@ describe("Ticket Service", () => {
     });
 
     test("should throw an error if more than 25 tickets are requested", () => {
-      const adults = new TicketTypeRequest(ADULT, 26);
+      const adultTickets = new TicketTypeRequest(ADULT, 26);
 
-      expect(() => ticketService.purchaseTickets(1, adults)).toThrow(
+      expect(() => ticketService.purchaseTickets(1, adultTickets)).toThrow(
         new InvalidPurchaseException(
           `Too many tickets requested - 26 of maximum 25`,
         ),
       );
     });
-    test.todo(
-      "should throw an error if child tickets are purchased without an adult ticket",
-    );
-    test.todo(
-      "should throw an error if infant tickets are purchased without an adult ticket",
-    );
+    test("should throw an error if no adult tickets are purchased", () => {
+      const childTickets = new TicketTypeRequest(CHILD, 1);
+      const infantTickets = new TicketTypeRequest(INFANT, 1);
+
+      expect(() =>
+        ticketService.purchaseTickets(1, childTickets, infantTickets),
+      ).toThrow(
+        new InvalidPurchaseException(
+          "Account ID 1 tried to purchase 1 child ticket and 1 infant ticket with no adult ticket",
+        ),
+      );
+    });
     test.todo(
       "should throw an error if the number of infant tickets exceeds the number of adult tickets",
     );
