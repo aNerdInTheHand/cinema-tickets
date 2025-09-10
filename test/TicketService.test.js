@@ -109,6 +109,10 @@ describe("Ticket Service", () => {
         ),
       );
     });
-    test.todo("should throw an error if no tickets are requested");
+    test("should throw an error if no tickets are requested", () => {
+      expect(() => ticketService.purchaseTickets(1)).toThrow(
+        "Account ID 1 tried to purchase tickets with no tickets requested",
+      );
+    });
   });
 });
