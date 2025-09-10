@@ -3,9 +3,9 @@ import InvalidPurchaseException from "../src/pairtest/lib/InvalidPurchaseExcepti
 import TicketService from "../src/pairtest/TicketService.js";
 import TicketTypeRequest from "../src/pairtest/lib/TicketTypeRequest.js";
 
-const ADULT = "ADULT";
-const CHILD = "CHILD";
-const INFANT = "INFANT";
+const adult = (count) => new TicketTypeRequest("ADULT", count);
+const child = (count) => new TicketTypeRequest("CHILD", count);
+const infant = (count) => new TicketTypeRequest("INFANT", count);
 
 describe("Ticket Service", () => {
   let ticketService;
@@ -24,9 +24,9 @@ describe("Ticket Service", () => {
       "should make a payment request to TicketPaymentService with the correct total amount",
       () => {
         const accountId = 1;
-        const adultTickets = new TicketTypeRequest("ADULT", 2);
-        const childTickets = new TicketTypeRequest("CHILD", 1);
-        const infantTickets = new TicketTypeRequest("INFANT", 1);
+        const adultTickets = adult(2);
+        const childTickets = child(1);
+        const infantTickets = infant(1);
 
         // // ADULT: 2 * 25 = 50
         // // CHILD: 1 * 15 = 15
@@ -61,7 +61,7 @@ describe("Ticket Service", () => {
   describe("invalid requests", () => {
     test("should throw if account ID is invalid", () => {
       const invalidAccountIds = [-1, 0, 1.5, "1", true];
-      const adults = new TicketTypeRequest(ADULT, 1);
+      const adults = adult(1);
 
       invalidAccountIds.forEach((id) => {
         expect(() => ticketService.purchaseTickets(id, adults)).toThrow(
@@ -71,7 +71,7 @@ describe("Ticket Service", () => {
     });
 
     test("should throw an error if more than 25 tickets are requested", () => {
-      const adultTickets = new TicketTypeRequest(ADULT, 26);
+      const adultTickets = adult(26);
 
       expect(() => ticketService.purchaseTickets(1, adultTickets)).toThrow(
         new InvalidPurchaseException(
@@ -80,8 +80,8 @@ describe("Ticket Service", () => {
       );
     });
     test("should throw an error if no adult tickets are purchased", () => {
-      const childTickets = new TicketTypeRequest(CHILD, 10);
-      const infantTickets = new TicketTypeRequest(INFANT, 1);
+      const childTickets = child(10);
+      const infantTickets = infant(1);
 
       expect(() =>
         ticketService.purchaseTickets(1, childTickets, infantTickets),
@@ -91,9 +91,24 @@ describe("Ticket Service", () => {
         ),
       );
     });
-    test.todo(
-      "should throw an error if the number of infant tickets exceeds the number of adult tickets",
-    );
+    test("should throw an error if the number of child or infant tickets exceeds the number of adult tickets", () => {
+      const adultTickets = adult(2);
+      const childTickets = adult(10);
+      const infantTickets = infant(10);
+
+      expect(() =>
+        ticketService.purchaseTickets(
+          1,
+          adultTickets,
+          childTickets,
+          infantTickets,
+        ),
+      ).toThrow(
+        new InvalidPurchaseException(
+          "Account ID 1 tried to purchase more infant tickets (10) than adult tickets (2)",
+        ),
+      );
+    });
     test.todo("should throw an error if no tickets are requested");
     test.todo(
       "should throw an error if the ticket type request contains no adult tickets",
