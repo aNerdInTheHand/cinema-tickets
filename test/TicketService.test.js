@@ -52,12 +52,15 @@ describe("Ticket Service", () => {
   });
 
   describe("invalid requests", () => {
-    test("should throw if account ID is invalid (<= 0)", () => {
+    test("should throw if account ID is invalid", () => {
+      const invalidAccountIds = [-1, 0, "1", true];
       const adults = new TicketTypeRequest("ADULT", 1);
 
-      expect(() => ticketService.purchaseTickets(0, adults)).toThrow(
-        InvalidPurchaseException,
-      );
+      invalidAccountIds.forEach((id) => {
+        expect(() => ticketService.purchaseTickets(id, adults)).toThrow(
+          InvalidPurchaseException,
+        );
+      });
     });
 
     test.todo("should throw an error if more than 25 tickets are requested");
