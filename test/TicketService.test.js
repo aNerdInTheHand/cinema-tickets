@@ -3,6 +3,10 @@ import InvalidPurchaseException from "../src/pairtest/lib/InvalidPurchaseExcepti
 import TicketService from "../src/pairtest/TicketService.js";
 import TicketTypeRequest from "../src/pairtest/lib/TicketTypeRequest.js";
 
+const ADULT = "ADULT";
+const CHILD = "CHILD";
+const INFANT = "INFANT";
+
 describe("Ticket Service", () => {
   let ticketService;
 
@@ -57,7 +61,7 @@ describe("Ticket Service", () => {
   describe("invalid requests", () => {
     test("should throw if account ID is invalid", () => {
       const invalidAccountIds = [-1, 0, 1.5, "1", true];
-      const adults = new TicketTypeRequest("ADULT", 1);
+      const adults = new TicketTypeRequest(ADULT, 1);
 
       invalidAccountIds.forEach((id) => {
         expect(() => ticketService.purchaseTickets(id, adults)).toThrow(
@@ -66,7 +70,15 @@ describe("Ticket Service", () => {
       });
     });
 
-    test.todo("should throw an error if more than 25 tickets are requested");
+    test("should throw an error if more than 25 tickets are requested", () => {
+      const adults = new TicketTypeRequest(ADULT, 26);
+
+      expect(() => ticketService.purchaseTickets(1, adults)).toThrow(
+        new InvalidPurchaseException(
+          `Too many tickets requested - 26 of maximum 25`,
+        ),
+      );
+    });
     test.todo(
       "should throw an error if child tickets are purchased without an adult ticket",
     );
