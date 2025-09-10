@@ -50,6 +50,10 @@ export default class TicketService {
 
   #validateTicketTypes(...ticketTypeRequests) {
     const ticketsRequested = this.#getTicketCounts(...ticketTypeRequests);
+    if (ticketsRequested.TOTAL === 0)
+      throw new InvalidPurchaseException(
+        `Account ID ${this.accountId} tried to purchase tickets with no tickets requested`,
+      );
 
     if (ticketsRequested.ADULT === 0)
       throw new InvalidPurchaseException(
