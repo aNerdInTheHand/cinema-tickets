@@ -60,10 +60,15 @@ describe("Ticket Service", () => {
         infantTickets,
       );
 
-      expect(logMock.info).toHaveBeenCalledWith(
-        { accountId },
+      const expectedLogs = [
         "Ticket purchase process started",
-      );
+        "Making payment",
+        "Payment successful",
+        "Reserving seats",
+        "Seats successfully reserved",
+        "Booking complete",
+      ];
+
       expect(validationMock.validateAccountId).toHaveBeenCalledWith(accountId);
       expect(validationMock.validateTicketTypes).toHaveBeenCalledWith(
         accountId,
@@ -80,6 +85,9 @@ describe("Ticket Service", () => {
         accountId,
         expectedPaymentAmount,
       );
+      expectedLogs.forEach((logMessage) => {
+        expect(logMock.info).toHaveBeenCalledWith({ accountId }, logMessage);
+      });
     });
   });
 
