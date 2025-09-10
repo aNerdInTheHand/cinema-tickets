@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import InvalidPurchaseException from "../src/pairtest/lib/InvalidPurchaseException.js";
 import TicketService from "../src/pairtest/TicketService.js";
 import TicketTypeRequest from "../src/pairtest/lib/TicketTypeRequest.js";
@@ -10,16 +10,50 @@ const infant = (count) => new TicketTypeRequest("INFANT", count);
 describe("Ticket Service", () => {
   let ticketService;
 
-  let seatReservationMock;
   let paymentMock;
+  let seatReservationMock;
+  let validationMock;
 
   beforeEach(() => {
-    seatReservationMock = { reserveSeat: vi.fn() };
     paymentMock = { makePayment: vi.fn() };
-    ticketService = new TicketService(paymentMock, seatReservationMock);
+    seatReservationMock = { reserveSeat: vi.fn() };
+    validationMock = {
+      validateAccountId: vi.fn(),
+      validateTicketTypes: vi.fn(),
+    };
+    ticketService = new TicketService(
+      paymentMock,
+      seatReservationMock,
+      validationMock,
+    );
   });
 
   describe("valid requests", () => {
+    test("should call the validation service", () => {
+      const accountId = 1;
+      const adultTickets = adult(2);
+      const childTickets = child(1);
+      const infantTickets = infant(1);
+      const expectedTicketRequests = {
+        ADULT: 2,
+        CHILD: 1,
+        INFANT: 1,
+        TOTAL: 4,
+      };
+
+      ticketService.purchaseTickets(
+        accountId,
+        adultTickets,
+        childTickets,
+        infantTickets,
+      );
+
+      expect(validationMock.validateAccountId).toHaveBeenCalledWith(accountId);
+      expect(validationMock.validateTicketTypes).toHaveBeenCalledWith(
+        accountId,
+        expectedTicketRequests,
+      );
+    });
     test.todo(
       "should make a payment request to TicketPaymentService with the correct total amount",
       () => {
@@ -59,60 +93,63 @@ describe("Ticket Service", () => {
   });
 
   describe("invalid requests", () => {
-    test("should throw if account ID is invalid", () => {
-      const invalidAccountIds = [-1, 0, 1.5, "1", true];
-      const adults = adult(1);
-
-      invalidAccountIds.forEach((id) => {
-        expect(() => ticketService.purchaseTickets(id, adults)).toThrow(
-          new InvalidPurchaseException(`Invalid account ID: ${id}`),
-        );
+    test("should only call validation service account validation with invalid account ID", () => {
+      const invalidAccountId = 0;
+      validationMock.validateAccountId.mockImplementation((accountId) => {
+        if (accountId === invalidAccountId) {
+          throw new InvalidPurchaseException();
+        }
       });
-    });
-
-    test("should throw an error if more than 25 tickets are requested", () => {
-      const adultTickets = adult(26);
-
-      expect(() => ticketService.purchaseTickets(1, adultTickets)).toThrow(
-        new InvalidPurchaseException(
-          `Too many tickets requested - 26 of maximum 25`,
-        ),
+      expect(() => ticketService.purchaseTickets(invalidAccountId)).toThrow(
+        InvalidPurchaseException,
       );
-    });
-    test("should throw an error if no adult tickets are purchased", () => {
-      const childTickets = child(10);
-      const infantTickets = infant(1);
 
-      expect(() =>
-        ticketService.purchaseTickets(1, childTickets, infantTickets),
-      ).toThrow(
-        new InvalidPurchaseException(
-          "Account ID 1 tried to purchase 10 child tickets and 1 infant ticket with no adult ticket",
-        ),
+      expect(validationMock.validateAccountId).toHaveBeenCalledWith(
+        invalidAccountId,
       );
+      expect(validationMock.validateTicketTypes).not.toHaveBeenCalled();
+      expect(paymentMock.makePayment).not.toHaveBeenCalled();
+      expect(seatReservationMock.reserveSeat).not.toHaveBeenCalled();
     });
-    test("should throw an error if the number of child or infant tickets exceeds the number of adult tickets", () => {
-      const adultTickets = adult(2);
-      const childTickets = child(10);
-      const infantTickets = infant(10);
 
+    test("should not call reservation or payments services with invalid ticket request", () => {
+      const validAccountId = 1;
+      const adultTickets = adult(0);
+      const childTickets = child(1);
+      const infantTickets = infant(0);
+      const invalidTicketsRequested = {
+        ADULT: 0,
+        CHILD: 1,
+        INFANT: 0,
+        TOTAL: 1,
+      };
+      validationMock.validateTicketTypes.mockImplementation(
+        (_accountId, ticketsRequested) => {
+          if (
+            JSON.stringify(ticketsRequested) ===
+            JSON.stringify(invalidTicketsRequested)
+          )
+            throw new InvalidPurchaseException();
+        },
+      );
       expect(() =>
         ticketService.purchaseTickets(
-          1,
+          validAccountId,
           adultTickets,
           childTickets,
           infantTickets,
         ),
-      ).toThrow(
-        new InvalidPurchaseException(
-          "Account ID 1 tried to purchase more infant tickets (10) than adult tickets (2)",
-        ),
+      ).toThrow(InvalidPurchaseException);
+
+      expect(validationMock.validateAccountId).toHaveBeenCalledWith(
+        validAccountId,
       );
-    });
-    test("should throw an error if no tickets are requested", () => {
-      expect(() => ticketService.purchaseTickets(1)).toThrow(
-        "Account ID 1 tried to purchase tickets with no tickets requested",
+      expect(validationMock.validateTicketTypes).toHaveBeenCalledWith(
+        validAccountId,
+        invalidTicketsRequested,
       );
+      expect(paymentMock.makePayment).not.toHaveBeenCalled();
+      expect(seatReservationMock.reserveSeat).not.toHaveBeenCalled();
     });
   });
 });
