@@ -15,4 +15,4 @@ npm test
 
 ## 🤔 Assumptions 🤔
 
-Though not explicitly stated in the business logic, I have assumed that the number of infant tickets must not exceed the number of adult tickets, due to the statement 'They will be sitting on an Adult's lap'.
+I have assumed that the number of infant tickets must not exceed the number of adult tickets, due to the statement 'They will be sitting on an Adult's lap'. However, I am assuming that infant tickets **do not** count towards the maximum number of seats in the booking, since they do not take up an additional physical seat. I've made this assumption as this is something that I would challenge in the requirements in a real-world project, because I believe the intention of this code is to manage the number of _seats_ (and the payment for said seats), rather than managing tickets specifically.
