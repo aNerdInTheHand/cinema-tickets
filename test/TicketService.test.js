@@ -44,7 +44,6 @@ describe("Ticket Service", () => {
         TOTAL: 4,
       };
       const expectedSeatsToReserve = 3; // infants are excluded
-      const expectedPaymentAmount = 65; // 2 * 25 + 1 * 15
 
       ticketService.purchaseTickets(
         accountId,
@@ -56,6 +55,9 @@ describe("Ticket Service", () => {
       expect(validationMock.validateAccountId).toHaveBeenCalledWith(accountId);
       expect(validationMock.validateTicketTypes).toHaveBeenCalledWith(
         accountId,
+        expectedTicketRequests,
+      );
+      expect(calculationMock.calculateCost).toHaveBeenCalledWith(
         expectedTicketRequests,
       );
       expect(seatReservationMock.reserveSeat).toHaveBeenCalledWith(
