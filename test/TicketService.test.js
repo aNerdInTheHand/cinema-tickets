@@ -110,11 +110,5 @@ describe("Ticket Service", () => {
       );
     });
     test.todo("should throw an error if no tickets are requested");
-    test.todo(
-      "should throw an error if the ticket type request contains no adult tickets",
-    );
-    test.todo(
-      "should throw an error if the number of tickets is not an integer",
-    );
   });
 });

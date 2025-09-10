@@ -18,10 +18,25 @@ export default class TicketService {
    */
 
   purchaseTickets(accountId, ...ticketTypeRequests) {
-    console.log(...ticketTypeRequests);
     this.accountId = accountId;
     this.#validateAccountId(accountId);
     this.#validateTicketTypes(...ticketTypeRequests);
+  }
+
+  #getTicketCounts(...ticketTypeRequests) {
+    const ticketsRequested = {
+      ADULT: 0,
+      CHILD: 0,
+      INFANT: 0,
+      TOTAL: 0,
+    };
+
+    ticketTypeRequests.forEach((request) => {
+      ticketsRequested[request.getTicketType()] += request.getNoOfTickets();
+      ticketsRequested.TOTAL += request.getNoOfTickets();
+    });
+
+    return ticketsRequested;
   }
 
   #validateAccountId(accountId) {
@@ -34,17 +49,7 @@ export default class TicketService {
   }
 
   #validateTicketTypes(...ticketTypeRequests) {
-    const ticketsRequested = {
-      ADULT: 0,
-      CHILD: 0,
-      INFANT: 0,
-      TOTAL: 0,
-    };
-
-    ticketTypeRequests.forEach((request) => {
-      ticketsRequested[request.getTicketType()] += request.getNoOfTickets();
-      ticketsRequested.TOTAL += request.getNoOfTickets();
-    });
+    const ticketsRequested = this.#getTicketCounts(...ticketTypeRequests);
 
     if (ticketsRequested.ADULT === 0)
       throw new InvalidPurchaseException(
@@ -66,8 +71,4 @@ export default class TicketService {
     if (count > 1) return `${word}s`;
     else return word;
   }
-
-  // #ensureAdultTickets(...ticketTypeRequests) {
-  //   if
-  // }
 }
