@@ -2,10 +2,10 @@ import C from "../../constants";
 import InvalidPurchaseException from "./InvalidPurchaseException.js";
 
 export default class CalculationService {
-  calculateCost(requestedTickets) {
+  calculateCost(ticketsRequested) {
     return (
-      C.ticketPrices.adult * requestedTickets.ADULT +
-      C.ticketPrices.child * requestedTickets.CHILD
+      C.ticketPrices.adult * ticketsRequested.ADULT +
+      C.ticketPrices.child * ticketsRequested.CHILD
     );
   }
 }

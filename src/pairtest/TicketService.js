@@ -5,8 +5,8 @@ import TicketTypeRequest from "./lib/TicketTypeRequest.js";
 export default class TicketService {
   constructor(
     calculationService,
-    seatReservationService,
     ticketPaymentService,
+    seatReservationService,
     validationService,
   ) {
     this.calculationService = calculationService;
@@ -20,8 +20,11 @@ export default class TicketService {
    */
 
   purchaseTickets(accountId, ...ticketTypeRequests) {
-    this.accountId = accountId;
-    this.#validateRequest(accountId, ...ticketTypeRequests);
+    this.#validateAccount(accountId);
+    const ticketsRequested = this.#getTicketCounts(...ticketTypeRequests);
+    this.#validateRequest(accountId, ticketsRequested);
+    this.#makePayment(accountId, ticketsRequested);
+    this.#reserveSeats(accountId, ticketsRequested);
   }
 
   #getTicketCounts(...ticketTypeRequests) {
@@ -40,10 +43,23 @@ export default class TicketService {
     return ticketsRequested;
   }
 
-  #validateRequest(accountId, ...ticketTypeRequests) {
-    const ticketsRequested = this.#getTicketCounts(...ticketTypeRequests);
-
+  #validateAccount(accountId) {
     this.validationService.validateAccountId(accountId);
+  }
+
+  #validateRequest(accountId, ticketsRequested) {
     this.validationService.validateTicketTypes(accountId, ticketsRequested);
+  }
+
+  #makePayment(accountId, ticketsRequested) {
+    const paymentAmount =
+      this.calculationService.calculateCost(ticketsRequested);
+    this.ticketPaymentService.makePayment(accountId, paymentAmount);
+  }
+
+  #reserveSeats(accountId, ticketsRequested) {
+    const seatsExcludingInfants =
+      ticketsRequested.TOTAL - ticketsRequested.INFANT;
+    this.seatReservationService.reserveSeat(accountId, seatsExcludingInfants);
   }
 }

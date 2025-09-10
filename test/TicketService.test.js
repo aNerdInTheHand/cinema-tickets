@@ -44,6 +44,11 @@ describe("Ticket Service", () => {
         TOTAL: 4,
       };
       const expectedSeatsToReserve = 3; // infants are excluded
+      const expectedPaymentAmount = 65; // 2 * 25 + 1 * 15
+
+      calculationMock.calculateCost.mockImplementation(
+        () => expectedPaymentAmount,
+      );
 
       ticketService.purchaseTickets(
         accountId,
