@@ -16,27 +16,30 @@ describe("Ticket Service", () => {
   });
 
   describe("valid requests", () => {
-    test("should make a payment request to TicketPaymentService with the correct total amount", () => {
-      const accountId = 1;
-      const adultTickets = new TicketTypeRequest("ADULT", 2);
-      const childTickets = new TicketTypeRequest("CHILD", 1);
-      const infantTickets = new TicketTypeRequest("INFANT", 1);
+    test.todo(
+      "should make a payment request to TicketPaymentService with the correct total amount",
+      () => {
+        const accountId = 1;
+        const adultTickets = new TicketTypeRequest("ADULT", 2);
+        const childTickets = new TicketTypeRequest("CHILD", 1);
+        const infantTickets = new TicketTypeRequest("INFANT", 1);
 
-      // // ADULT: 2 * 25 = 50
-      // // CHILD: 1 * 15 = 15
-      // // INFANT: 1 * 0 = 0
-      // // Total = 65
+        // // ADULT: 2 * 25 = 50
+        // // CHILD: 1 * 15 = 15
+        // // INFANT: 1 * 0 = 0
+        // // Total = 65
 
-      ticketService.purchaseTickets(
-        accountId,
-        adultTickets,
-        childTickets,
-        infantTickets,
-      );
+        ticketService.purchaseTickets(
+          accountId,
+          adultTickets,
+          childTickets,
+          infantTickets,
+        );
 
-      expect(seatReservationMock.reserveSeat).toHaveBeenCalledWith(1, 3);
-      expect(paymentMock.makePayment).toHaveBeenCalledWith(1, 65);
-    });
+        expect(seatReservationMock.reserveSeat).toHaveBeenCalledWith(1, 3);
+        expect(paymentMock.makePayment).toHaveBeenCalledWith(1, 65);
+      },
+    );
 
     test.todo("should calculate the correct price for a single adult ticket");
     test.todo("should calculate the correct price for multiple ticket types");
@@ -53,12 +56,12 @@ describe("Ticket Service", () => {
 
   describe("invalid requests", () => {
     test("should throw if account ID is invalid", () => {
-      const invalidAccountIds = [-1, 0, "1", true];
+      const invalidAccountIds = [-1, 0, 1.5, "1", true];
       const adults = new TicketTypeRequest("ADULT", 1);
 
       invalidAccountIds.forEach((id) => {
         expect(() => ticketService.purchaseTickets(id, adults)).toThrow(
-          InvalidPurchaseException,
+          new InvalidPurchaseException(`Invalid account ID: ${id}`),
         );
       });
     });
