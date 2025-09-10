@@ -18,7 +18,9 @@ export default class TicketService {
    */
 
   purchaseTickets(accountId, ...ticketTypeRequests) {
+    console.log(...ticketTypeRequests);
     this.#validateAccountId(accountId);
+    this.#validateTicketTypes(...ticketTypeRequests);
   }
 
   #validateAccountId(accountId) {
@@ -28,5 +30,16 @@ export default class TicketService {
       accountId < 1
     )
       throw new InvalidPurchaseException(`Invalid account ID: ${accountId}`);
+  }
+
+  #validateTicketTypes(...ticketTypeRequests) {
+    let totalTickets = 0;
+    ticketTypeRequests.forEach((request) => {
+      totalTickets += request.getNoOfTickets();
+    });
+    if (totalTickets > 25)
+      throw new InvalidPurchaseException(
+        `Too many tickets requested - ${totalTickets} of maximum ${C.maxTickets}`,
+      );
   }
 }
