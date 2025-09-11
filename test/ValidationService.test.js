@@ -1,10 +1,15 @@
-import { describe, expect, test } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import C from "../src/constants";
 import InvalidPurchaseException from "../src/pairtest/lib/InvalidPurchaseException.js";
 import ValidationService from "../src/pairtest/lib/ValidationService.js";
 
 describe("Validation Service", () => {
-  const validationService = new ValidationService();
+  let logMock;
+  let validationService;
+  beforeEach(() => {
+    logMock = { info: vi.fn(), error: vi.fn() };
+    validationService = new ValidationService(logMock);
+  });
   const validAccountId = 1;
   const invalidAccountIds = [-1, 0, 1.5, "1", true];
   const validRequest = {
@@ -19,12 +24,21 @@ describe("Validation Service", () => {
       expect(() =>
         validationService.validateAccountId(validAccountId, validRequest),
       ).not.toThrow();
+      expect(logMock.info).toHaveBeenCalledExactlyOnceWith(
+        { accountId: validAccountId },
+        "Validating account ID",
+      );
+      expect(logMock.error).not.toHaveBeenCalled();
     });
 
     test("should throw if account ID is invalid", () => {
       invalidAccountIds.forEach((id) => {
         expect(() => validationService.validateAccountId(id)).toThrow(
           new InvalidPurchaseException(`Invalid account ID: ${id}`),
+        );
+        expect(logMock.error).toHaveBeenCalledWith(
+          { accountId: id },
+          "Invalid account ID",
         );
       });
     });
@@ -38,11 +52,16 @@ describe("Validation Service", () => {
         INFANT: 10,
       };
       expect(() =>
-        validationService.validateAccountId(
+        validationService.validateTicketTypes(
           validAccountId,
           edgeCaseValidRequest,
         ),
       ).not.toThrow();
+      expect(logMock.info).toHaveBeenCalledExactlyOnceWith(
+        { ticketsRequested: edgeCaseValidRequest },
+        "Validating ticket request",
+      );
+      expect(logMock.error).not.toHaveBeenCalled();
     });
     test("should throw an error if more than 25 tickets are requested", () => {
       const invalidRequest = {
@@ -106,6 +125,9 @@ describe("Validation Service", () => {
           "Account ID 1 tried to purchase 0 child tickets and 3 infant tickets with no adult ticket",
         ),
       );
+      expect(logMock.error).toHaveBeenCalledWith(
+        /Account ID 1 tried to purchase/g,
+      );
     });
     test("should throw an error if the number of infant tickets exceeds the number of adult tickets", () => {
       const invalidRequest = {
@@ -120,11 +142,17 @@ describe("Validation Service", () => {
           "Account ID 1 tried to purchase more infant tickets (6) than adult tickets (5)",
         ),
       );
+      expect(logMock.error).toHaveBeenCalledWith(
+        "Account ID 1 tried to purchase more infant tickets (6) than adult tickets (5)",
+      );
     });
     test("should throw an error if no tickets are requested", () => {
       expect(() =>
         validationService.validateTicketTypes(validAccountId),
       ).toThrow(
+        "Account ID 1 tried to purchase tickets with no tickets requested",
+      );
+      expect(logMock.error).toHaveBeenCalledWith(
         "Account ID 1 tried to purchase tickets with no tickets requested",
       );
     });
