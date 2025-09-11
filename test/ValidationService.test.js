@@ -58,7 +58,7 @@ describe("Validation Service", () => {
         ),
       ).not.toThrow();
       expect(logMock.info).toHaveBeenCalledExactlyOnceWith(
-        { ticketsRequested: edgeCaseValidRequest },
+        { accountId: validAccountId, ticketsRequested: edgeCaseValidRequest },
         "Validating ticket request",
       );
       expect(logMock.error).not.toHaveBeenCalled();
@@ -76,6 +76,13 @@ describe("Validation Service", () => {
         new InvalidPurchaseException(
           `Too many tickets requested - 26 of maximum ${C.maxTickets}`,
         ),
+      );
+      expect(logMock.error).toHaveBeenCalledWith(
+        {
+          accountId: validAccountId,
+          ticketsRequested: invalidRequest,
+        },
+        "Too many tickets requested",
       );
     });
 
@@ -125,9 +132,16 @@ describe("Validation Service", () => {
           "Account ID 1 tried to purchase 0 child tickets and 3 infant tickets with no adult ticket",
         ),
       );
-      expect(logMock.error).toHaveBeenCalledWith(
-        /Account ID 1 tried to purchase/g,
-      );
+      [
+        invalidRequestChildAndInfant,
+        invalidRequestChildOnly,
+        invalidRequestInfantOnly,
+      ].forEach((request) => {
+        expect(logMock.error).toHaveBeenCalledWith(
+          { accountId: validAccountId, ticketsRequested: request },
+          "No adult tickets in request",
+        );
+      });
     });
     test("should throw an error if the number of infant tickets exceeds the number of adult tickets", () => {
       const invalidRequest = {
@@ -143,7 +157,8 @@ describe("Validation Service", () => {
         ),
       );
       expect(logMock.error).toHaveBeenCalledWith(
-        "Account ID 1 tried to purchase more infant tickets (6) than adult tickets (5)",
+        { accountId: validAccountId, ticketsRequested: invalidRequest },
+        "Insufficient adult tickets in request",
       );
     });
     test("should throw an error if no tickets are requested", () => {
@@ -153,7 +168,11 @@ describe("Validation Service", () => {
         "Account ID 1 tried to purchase tickets with no tickets requested",
       );
       expect(logMock.error).toHaveBeenCalledWith(
-        "Account ID 1 tried to purchase tickets with no tickets requested",
+        {
+          accountId: validAccountId,
+          ticketsRequested: undefined,
+        },
+        "No tickets requested",
       );
     });
   });
