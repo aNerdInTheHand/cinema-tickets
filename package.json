@@ -1,0 +1,30 @@
+{
+  "name": "cinema-tickets-javascript",
+  "description": "This is a coding exercise which will allow you to demonstrate how you code and your approach to a given problem.",
+  "version": "1.0.1",
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "type": "module",
+  "scripts": {
+    "lint": "npx prettier . --write",
+    "lint:check": "npx prettier . --check",
+    "prepare": "husky",
+    "start": "node src/app.js",
+    "test": "vitest"
+  },
+  "devDependencies": {
+    "globals": "^16.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
+    "prettier": "3.6.2",
+    "vitest": "^3.2.4"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "pino": "^9.9.5"
+  }
+}
