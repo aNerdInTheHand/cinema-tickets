@@ -10,6 +10,7 @@
     "lint": "npx prettier . --write",
     "lint:check": "npx prettier . --check",
     "prepare": "husky",
+    "start": "node src/app.js",
     "test": "vitest"
   },
   "devDependencies": {
@@ -23,6 +24,7 @@
     "**/*": "prettier --write --ignore-unknown"
   },
   "dependencies": {
+    "express": "^5.1.0",
     "pino": "^9.9.5"
   }
 }
