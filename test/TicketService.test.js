@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 import InvalidPurchaseException from "../src/pairtest/lib/InvalidPurchaseException.js";
 import TicketService from "../src/pairtest/TicketService.js";
 import TicketTypeRequest from "../src/pairtest/lib/TicketTypeRequest.js";

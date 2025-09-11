@@ -1,4 +1,4 @@
-import C from "../../constants";
+import C from "../../constants/index.js";
 import InvalidPurchaseException from "./InvalidPurchaseException.js";
 
 export default class ValidationService {

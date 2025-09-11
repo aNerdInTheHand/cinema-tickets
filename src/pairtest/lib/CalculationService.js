@@ -1,4 +1,4 @@
-import C from "../../constants";
+import C from "../../constants/index.js";
 
 export default class CalculationService {
   calculateCost(ticketsRequested) {
