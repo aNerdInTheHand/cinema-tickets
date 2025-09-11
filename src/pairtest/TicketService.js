@@ -25,7 +25,6 @@ export default class TicketService {
    * @param  {...TicketTypeRequest} ticketTypeRequests
    */
   purchaseTickets(accountId, ...ticketTypeRequests) {
-    this.logger.info({ ...ticketTypeRequests }, "Ticket Type Requests");
     this.logger.info({ accountId }, "Ticket purchase process started");
 
     this.#validateAccount(accountId);
